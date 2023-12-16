@@ -16,16 +16,25 @@
         <nav>
             <div class="nav-wrapper">
                 <ul>
-                    <li><a href="{% url 'home' %}" class="left brand-logo">&nbsp;&nbsp;Cat Collector</a></li>
+                    <li><a href="{% url 'home' %}" class="left brand-logo">&nbsp;&nbsp;CatC</a></li>
+                    <li><a href="{% url 'home' %}" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Welcome,{{user}}</a></li>
                 </ul>
                 <ul class="right">
                     <!-- changes below -->
+                    
                     <li><a href="{% url 'about' %}">About</a></li>
                     {% if user.is_authenticated %}
                       <li><a href="{% url 'toys_create' %}">Add a Toy</a></li>
                       <li><a href="{% url 'toys_index' %}">View All Toys</a></li>
                       <li><a href="{% url 'cats_create' %}">Add a Cat</a></li>
                       <li><a href="{% url 'index' %}">View All My Cats</a></li>
+
+                      {% if request.user.profile%}
+                      <li><a href="{% url 'profile_detail' request.user.profile.id %}">Profile</a></li>
+                      {% else %}
+                      <li><a href="{% url 'profile_create'%}">Create Profile</a></li>
+                      {% endif %}
+
                       <li><a href="#" onclick="document.getElementById('logout-form').submit();">Log Out</a>
                         <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
                             {% csrf_token %}

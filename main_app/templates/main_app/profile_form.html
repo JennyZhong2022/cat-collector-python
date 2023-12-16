@@ -1,0 +1,20 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Your Profile</h1>
+
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <p>Name:</p>
+    <p>{{request.user.username}}</p>
+ 
+    {{form.as_p}}
+    <!-- <input type="submit" value="Update" class="btn"> -->
+    
+    <input type="submit" value= '{% if request.user.profile %}  Submit Update{%else%} Create {%endif%}' class="btn">
+  </form>
+{% endblock %}
+

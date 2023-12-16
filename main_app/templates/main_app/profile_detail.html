@@ -1,0 +1,15 @@
+
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Your Profile</h1>
+
+
+  <p>Name: {{ request.user.username }}</p>
+  <p>Favorite Color: {{ request.user.profile.favorite_color }}</p>
+
+  <!-- Link to the ProfileUpdate view for editing -->
+  <a href="{% url 'profile_update' request.user.profile.id %}" class="btn">Update Profile</a>
+{% endblock %}

@@ -5,6 +5,12 @@ urlpatterns = [
   path('', views.home, name='home'),
   path('about/', views.about, name='about'),
   path('cats/', views.cats_index, name='index'),
+
+  path('profile/<int:pk>/',views.ProfileDetail.as_view(),name='profile_detail'),
+  path('profile/create/',views.ProfileCreate.as_view(),name='profile_create'),
+  path('profile/<int:pk>/update/',views.ProfileUpdate.as_view(),name='profile_update'),
+
+
   path('cats/<int:cat_id>/', views.cats_detail, name='detail'),
   path('cats/create/', views.CatCreate.as_view(), name='cats_create'),
   path('cats/<int:pk>/update/', views.CatUpdate.as_view(), name='cats_update'),

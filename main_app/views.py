@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Cat, Toy
+from .models import Cat, Toy,Profile
 from .forms import FeedingForm
+from django.http import Http404
+
 
 
 # Create your views here.
@@ -96,6 +98,61 @@ class ToyUpdate(LoginRequiredMixin,UpdateView):
 class ToyDelete(LoginRequiredMixin,DeleteView):
   model = Toy
   success_url = '/toys'
+
+class ProfileDetail(LoginRequiredMixin, DetailView):
+    model = Profile
+
+    def get_object(self):
+        # Ensure the user is accessing their own profile
+        profile = super().get_object()
+        if profile.user != self.request.user:
+            raise Http404  # Or some other response indicating they don't have access
+        return profile
+
+class ProfileCreate(LoginRequiredMixin,CreateView):
+  model = Profile  
+  fields = ['favorite_color']
+
+  def form_valid(self, form):
+        form.instance.user = self.request.user
+        self.object = form.save()
+        return redirect('profile_detail', pk=self.object.pk)  # Redirect to the detail view
+
+  def dispatch(self, request, *args, **kwargs):
+        if hasattr(request.user, 'profile'):
+            return redirect('profile_update', pk=request.user.profile.id)
+        return super().dispatch(request, *args, **kwargs)  
+
+
+class ProfileUpdate(LoginRequiredMixin,UpdateView):
+  model = Profile  
+  fields = ['favorite_color']
+
+  def get_object(self):
+        # Ensure the user is accessing their own profile
+        profile = super().get_object()
+        if profile.user != self.request.user:
+            raise Http404  # Or some other response indicating they don't have access
+        return profile
+
+# class ProfileDetail(LoginRequiredMixin, DetailView):
+#     model = Profile
+
+#     def get(self, request, *args, **kwargs):
+#         try:
+#             return super().get(request, *args, **kwargs)
+#         except Http404:
+#             # If no profile found, redirect to ProfileUpdate to create one
+#             return redirect('profile_update', pk=request.user.id)
+
+
+# class ProfileUpdate(LoginRequiredMixin, UpdateView):
+#     model = Profile
+#     fields = ['favorite_color']
+
+#     def get_object(self, queryset=None):
+#         profile, created = Profile.objects.get_or_create(user=self.request.user)
+#         return profile
 
 @login_required
 def assoc_toy(request, cat_id, toy_id):
